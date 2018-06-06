@@ -1,3 +1,4 @@
+import {Collection, Model, MovieModel, MovieCollection} from './models/movies.js'
 class View {
     constructor(options/*el, model, className, tagName*/) {
         let tag = options.tagName || 'div';

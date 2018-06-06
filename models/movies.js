@@ -1,5 +1,5 @@
 //movies collection
-class Collection {
+export class Collection {
     constructor (model,  url, children) {
         this.Model = model; // model class 
         this.children = children; // models stored in collection
@@ -23,11 +23,11 @@ class Collection {
     }
 }
 
-class MovieCollection extends Collection {
+export class MovieCollection extends Collection {
     
 }
 
-class Model {
+export class Model {
     constructor (options) {
         //this._id = generateId();
         for (let key in options) {
@@ -43,7 +43,7 @@ class Model {
     }
 }
 
-class MovieModel extends Model {
+export class MovieModel extends Model {
     setTitle(title) {
         this.title = title;
     }
