@@ -9,17 +9,23 @@
     <script src=https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.0/underscore-min.js defer></script>
     <script src="templates/templates.js" defer></script>
     <script src="models/movies.js" type="module"></script>
+    <script src="models/collections.js" type="module"></script>
+    <script src="models/models.js" type="module"></script>
+    <script src="utils/image-utils.js" type="module"></script>
     <script src="main.js" type="module"></script>
 </head>
 <body>
-    
+    <header>Cinema</header>
+    <nav><a class='nav' data-route="movies" href="/movies">Movies</a> <a class='nav'  data-route="sessions" href="/sessions">Cinema</a></nav>
     <div id='movie-list'>
             <form name="movie-form">
                     <label>Name: </label><input type="text" name="name"/>
-                    <label>Year: </label><input required type="text" pattern="[0-9]" name="year"/><br>
+                    <label>Year: </label><input type="text" name="year"/><br>
                     <button type="button" id="new-movie-button">Add new Movie</button>
             </form>
-      
+    </div>
+    <div id="view">
+
     </div>
     
 </body>

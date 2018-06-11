@@ -1,4 +1,17 @@
-import { Collection, Model, MovieModel, MovieCollection } from './models/movies.js'
+import { Model, MovieModel } from './models/models.js'
+import { Collection, MovieCollection} from './models/collections.js'
+import loadImage from './utils/image-utils.js'
+
+var routes = [
+    {
+        id: "movies",
+        url: '/movies',
+        init: function () {
+            
+        }
+    }
+]
+
 class View {
     constructor(options/*el, model, className, tagName*/) {
         let tag = options.tagName || 'div';
@@ -14,12 +27,20 @@ class View {
             this.el.classList.add(this.className);
         }
     }
+    destroy() {
+        this.deleteEvents()
+        this.el.parentNode.removeChild(this.el);
+    }
+    deleteEvents() {
+
+    }
 }
 
 class MovieListView extends View {
     constructor(options) {
         super(options);
         this.children = options.children || [];
+        this.collection = options.collection;
         document.querySelector('#new-movie-button').addEventListener('click', function (e) {
             const nameInput = document.querySelector('[name="name"]');
             const yearInput = document.querySelector('[name="year"]')
@@ -33,7 +54,7 @@ class MovieListView extends View {
             }).then((movie) => this.addMovie(new MovieView({
                 model: movie,
                 className: "movie-item",
-                parent: this
+                collection: this.collection
             }))).catch((e) => console.log(e))
         }.bind(this));
     }
@@ -61,15 +82,49 @@ class MovieView extends View {
         this.collection = options.collection;
     }
     render() {
+        /* pattern promise */
         var renderWithParams = _.template(templates.movieHTML);
         this.el.innerHTML = renderWithParams({
             title: this.model.title,
             year: this.model.year
         });
-        this.el.querySelector(".remove-item-button").onclick = function (e){
-            console.log('remove', this);
-            this.collection.delete(this.model.id)
+        this.el.querySelector(".remove-item-button").onclick = function (e) {
+            let view = this;
+            this.collection.delete(this.model.id).then(function (res) {
+                view.destroy();
+            }).catch(function (err) {
+                console.log(err)
+            })
         }.bind(this)
+
+        loadImage(this.model.img_src).then((img) => {
+            this.el.querySelector('.image-wrapper').appendChild(img);
+        }).catch(function (err) {
+            console.log(err)
+        });
+
+        // pattern callback;
+        // var renderWithParams = _.template(templates.movieHTML);
+        // this.el.innerHTML = renderWithParams({
+        //     title: this.model.title,
+        //     year: this.model.year
+        // });
+        // this.el.querySelector(".remove-item-button").onclick = function (e) {
+        //     let view = this;
+        //     this.collection.delete(this.model.id).then(function (res) {
+        //         view.destroy();
+        //     }).catch(function (err) {
+        //         console.log(err)
+        //     })
+        // }.bind(this)
+        // loadImage(this.model.img_src, function (err, img) {
+        //     if (!err) {
+        //         this.el.querySelector('.image-wrapper').appendChild(img);
+        //     }
+        // }.bind(this))
+        
+
+      
     
         return this;
     }
@@ -101,3 +156,31 @@ moviesCollection.fetch().then(function (result) {
 });
 
 
+// let nav = document.querySelector('nav');
+
+// window.addEventListener("hashchange", function (e) {
+//    console.log(location.hash)
+// });
+
+
+let nav = document.querySelector('nav');
+nav.addEventListener('click', function (e){
+    e.preventDefault();
+    if(e.target.classList.contains('nav')) {
+        var stateObj = { foo:  e.target.href };
+        history.pushState(stateObj, e.target.href, e.target.href);
+        console.log(stateObj.foo);
+    }
+})
+window.addEventListener('popstate', function (e) {
+   console.log(e.state.foo);
+})
+
+// function renderContent (data) {
+//     var view = document.getElementById('view');
+//     view.innerHTML = data;
+// }
+
+// window.addEventListener("hashchange", function (e) {
+//    renderContent(location.hash)
+// });
