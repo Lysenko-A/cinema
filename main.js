@@ -1,5 +1,5 @@
-import { Model, MovieModel } from './models/models.js'
-import { Collection, MovieCollection} from './models/collections.js'
+import {Model, MovieModel} from './models/models.js'
+import {Collection, MovieCollection} from './models/collections.js'
 import loadImage from './utils/image-utils.js'
 
 var routes = [
@@ -7,7 +7,7 @@ var routes = [
         id: "movies",
         url: '/movies',
         init: function () {
-            
+
         }
     }
 ]
@@ -27,10 +27,12 @@ class View {
             this.el.classList.add(this.className);
         }
     }
+
     destroy() {
         this.deleteEvents()
         this.el.parentNode.removeChild(this.el);
     }
+
     deleteEvents() {
 
     }
@@ -58,11 +60,13 @@ class MovieListView extends View {
             }))).catch((e) => console.log(e))
         }.bind(this));
     }
+
     addMovie(movie) {
         this.children.push(movie);
         this.el.appendChild(movie.render().el);
         //add new movie to the children and render it
     }
+
     render() {
         if (this.children.length > 0) {
             let renderWithParams = _.template(templates.movieListHTML);
@@ -76,11 +80,13 @@ class MovieListView extends View {
         return this;
     }
 }
+
 class MovieView extends View {
-    constructor (options) {
+    constructor(options) {
         super(options);
         this.collection = options.collection;
     }
+
     render() {
         /* pattern promise */
         var renderWithParams = _.template(templates.movieHTML);
@@ -102,6 +108,17 @@ class MovieView extends View {
         }).catch(function (err) {
             console.log(err)
         });
+        Promise.all(this.model.small_img_urls).then((item) => {
+            item.map((src) => {
+                loadImage(src).then((img) => {
+                    this.el.querySelector('.image-wrapper--small').appendChild(img);
+                }).catch(function (err) {
+                    console.log(err);
+                })
+            })
+        }).catch(function (err) {
+            console.log(err);
+        });
 
         // pattern callback;
         // var renderWithParams = _.template(templates.movieHTML);
@@ -122,10 +139,8 @@ class MovieView extends View {
         //         this.el.querySelector('.image-wrapper').appendChild(img);
         //     }
         // }.bind(this))
-        
 
-      
-    
+
         return this;
     }
 }
@@ -164,16 +179,16 @@ moviesCollection.fetch().then(function (result) {
 
 
 let nav = document.querySelector('nav');
-nav.addEventListener('click', function (e){
+nav.addEventListener('click', function (e) {
     e.preventDefault();
-    if(e.target.classList.contains('nav')) {
-        var stateObj = { foo:  e.target.href };
+    if (e.target.classList.contains('nav')) {
+        var stateObj = {foo: e.target.href};
         history.pushState(stateObj, e.target.href, e.target.href);
         console.log(stateObj.foo);
     }
 })
 window.addEventListener('popstate', function (e) {
-   console.log(e.state.foo);
+    console.log(e.state.foo);
 })
 
 // function renderContent (data) {
